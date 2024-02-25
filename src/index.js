@@ -164,6 +164,10 @@ export function init() {
 
   detectWebXR();
 
+  document.body.addEventListener('keydown', ev => {
+    handleKeyDown(ev);
+  });
+
   var w = 100;
   ecsyWorld = new World();
   ecsyWorld
@@ -304,6 +308,39 @@ export function init() {
   },
   debug);
 
+}
+
+function handleKeyDown(ev) {
+  const moveSpeed = 0.2; // Adjust the movement speed as needed
+  switch(ev.keyCode) {
+    case 87: // W key
+    case 38: // Arrow Up
+      controls.moveForward(moveSpeed);
+      break;
+    case 65: // A key
+    case 37: // Arrow Left
+      controls.moveRight(-moveSpeed);
+      break;
+    case 83: // S key
+    case 40: // Arrow Down
+      controls.moveForward(-moveSpeed);
+      break;
+    case 68: // D key
+    case 39: // Arrow Right
+      controls.moveRight(moveSpeed);
+      break;
+    case 78: // N key for next room, only in debug mode
+      if(debug) gotoRoom((context.room + 1) % rooms.length);
+      break;
+    default: {
+      if(debug) {
+        var room = ev.keyCode - 48; // Number keys for direct room access, debug only
+        if (!ev.metaKey && room >= 0 && room < rooms.length) {
+          gotoRoom(room);
+        }
+      }
+    }
+  }
 }
 
 function setupControllers() {
